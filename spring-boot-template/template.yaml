@@ -1,0 +1,99 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: spring-boot-backend-template
+  title: Spring Boot Java Template
+  description: Use este modelo para criar um novo projeto Java com Spring Boot
+  tags:
+    - java
+
+spec:
+  owner: user:guest
+  type: service
+  parameters:
+    - title: Configuracões do Projeto
+      required:
+        - appName
+        - owner
+        - port
+      properties:
+        appName:
+          title: Nome da Aplicacão
+          type: string
+          ui:autofocus: true
+        description:
+          title: Descricão
+          type: string
+          description: Descricao da aplicacão.
+          ui:options:
+            rows: 5
+        owner:
+          title: Proprietário(s)
+          type: string
+          description: Squad responsável pelo projeto.
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - Group
+              - User
+        port:
+          title: Porta
+          type: number
+          default: 8080
+          description: Substitua a porta a ser exposta pela aplicacão. (Default 8080)
+        # system:
+        #   title: Sistema
+        #   type: string
+        #   ui:field: EntityPicker
+        #   ui:options:
+        #     catalogFilter:
+        #       kind:
+        #         - System
+    - title: Configuracões do Repositório
+      required: [repoUrl]
+      properties:
+        repoUrl:
+          title: Local do Repositório
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - dev.azure.com
+
+  steps:
+    - id: template
+      name: Fetch Skeleton + Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        copyWithoutRender:
+          - .github/workflows/*
+        values:
+          appName: ${{ parameters.appName }}
+          owner: ${{ parameters.owner }}
+          description: ${{ parameters.description }}
+          port: ${{ parameters.port }}
+          # destination: ${{ parseRepoUrl parameters.repoUrl }}
+
+    - id: publish
+      name: Publish
+      action: publish:azure
+      input:
+        allowedHosts: ["dev.azure.com"]
+        description: ${{ parameters.description }}
+        repoUrl: ${{ parameters.repoUrl }}
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+        catalogInfoPath: "/catalog-info.yaml"
+
+  output:
+    links:
+      - title: Repositório
+        url: ${{ steps['publish'].output.remoteUrl }}
+      - title: Abrir Catálogo
+        icon: catalog
+        entityRef: ${{ steps['register'].output.entityRef }}

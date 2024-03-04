@@ -81,7 +81,7 @@ spec:
       input:
         description: ${{ parameters.appName }}
         repoUrl: ${{ parameters.repoUrl }}
-        organization: ${{ parameters.repoUrl | parseRepoUrl }}
+        organization: ${{ parseRepoUrl parameters.repoUrl }}
         project: ${{ parameters.repoUrl | parseRepoUrl }}
 
     # - id: publish

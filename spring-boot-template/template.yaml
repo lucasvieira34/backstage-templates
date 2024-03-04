@@ -77,18 +77,27 @@ spec:
 
     - id: publish
       name: Publish
-      action: publish:azure
+      action: azure:repo:push
       input:
-        allowedHosts: ["dev.azure.com"]
-        description: ${{ parameters.description }}
+        description: ${{ parameters.appName }}
         repoUrl: ${{ parameters.repoUrl }}
+        organization: ${{ parameters.repoUrl | parseRepoUrl }}
+        project: ${{ parameters.repoUrl | parseRepoUrl }}
 
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
-        catalogInfoPath: "/catalog-info.yaml"
+    # - id: publish
+    #   name: Publish
+    #   action: publish:azure
+    #   input:
+    #     allowedHosts: ["dev.azure.com"]
+    #     description: ${{ parameters.description }}
+    #     repoUrl: ${{ parameters.repoUrl }}
+
+    # - id: register
+    #   name: Register
+    #   action: catalog:register
+    #   input:
+    #     repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+    #     catalogInfoPath: "/catalog-info.yaml"
 
   output:
     links:

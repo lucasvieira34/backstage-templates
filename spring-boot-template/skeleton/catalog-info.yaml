@@ -2,6 +2,8 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: ${{ values.appName | dump }}
+  annotations:
+    dev.azure.com/project-repo: my-project/my-repo
   # annotations:
   #   github.com/project-slug: ${{ values.destination.owner }}/{{ values.destination.repo }}
 spec:

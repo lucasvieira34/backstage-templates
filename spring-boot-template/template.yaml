@@ -77,7 +77,7 @@ spec:
 
     - id: publish
       name: Publish
-      action: azure:repo:push
+      action: azure:repo:publish
       input:
         description: ${{ parameters.appName }}
         repoUrl: ${{ parameters.repoUrl }}
